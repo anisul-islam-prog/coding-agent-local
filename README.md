@@ -14,31 +14,30 @@
 ## Steps
 ### 1. Install Ollama
     
-    ```sh
-    
-    # Install Ollama natively (required for Metal GPU acceleration)
-    brew install ollama
+```sh    
+# Install Ollama natively (required for Metal GPU acceleration)
+brew install ollama
 
-    # Or use the official installer
-    curl -fsSL https://ollama.com/install.sh | sh
+# Or use the official installer
+curl -fsSL https://ollama.com/install.sh | sh
 
-    # Start Ollama service
-    ollama serve
+# Start Ollama service
+ollama serve
 
-    # Pull the recommended 7B coding model
-    ollama pull qwen2.5-coder:7b
+# Pull the recommended 7B coding model
+ollama pull qwen2.5-coder:7b
 
-    # Optional: Pull smaller fallback model
-    ollama pull phi3:3.8b
+# Optional: Pull smaller fallback model
+ollama pull phi3:3.8b
 
-    # Test it works
-    ollama run qwen2.5-coder:7b "Write a Python function to validate email addresses"
+# Test it works
+ollama run qwen2.5-coder:7b "Write a Python function to validate email addresses"
 
-    # Check if Ollama is actually running
-    lsof -i :11434
+# Check if Ollama is actually running
+lsof -i :11434
 
-    # Then in another terminal, check if it's using GPU:
-    ollama ps
+# Then in another terminal, check if it's using GPU:
+ollama ps
 
-    # If it shows 100% CPU instead of 100% GPU Metal acceleration is NOT working.
-    ```
+# If it shows 100% CPU instead of 100% GPU Metal acceleration is NOT working.
+```

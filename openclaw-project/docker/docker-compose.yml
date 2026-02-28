@@ -1,0 +1,68 @@
+services:
+  openclaw-gateway:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: openclaw-gateway
+    restart: unless-stopped
+    shm_size: '2gb'
+    environment:
+      - HOME=/home/node
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OLLAMA_API_KEY=ollama-local
+      - OLLAMA_KEEP_ALIVE=-1
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      - BRAVE_API_KEY=${BRAVE_API_KEY:-}
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN:-}
+      # Use lan binding but will set allowedOrigins for Control UI
+      - OPENCLAW_GATEWAY_BIND=lan
+    volumes:
+      - ~/.openclaw:/home/node/.openclaw
+      - ~/openclaw-workspace:/home/node/.openclaw/workspace
+      - /dev/shm:/dev/shm
+    ports:
+      # Gateway WebSocket/API port
+      - "${OPENCLAW_GATEWAY_PORT:-18789}:18789"
+    networks:
+      - openclaw-network
+    command:
+      [
+        "node",
+        "dist/index.js",
+        "gateway",
+        "--bind",
+        "lan",
+        "--port",
+        "18789",
+      ]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:18790/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  openclaw-cli:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: openclaw-cli
+    environment:
+      - HOME=/home/node
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OLLAMA_API_KEY=ollama-local
+      - OLLAMA_KEEP_ALIVE=-1
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN:-}
+      - BROWSER=echo
+    volumes:
+      - ~/.openclaw:/home/node/.openclaw
+      - ~/openclaw-workspace:/home/node/.openclaw/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+    stdin_open: true
+    tty: true
+    entrypoint: ["node", "dist/index.js"]
+    networks:
+      - openclaw-network
+    profiles:
+      - cli
+
+networks:
+  openclaw-network:
+    driver: bridge

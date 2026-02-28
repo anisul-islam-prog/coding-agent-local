@@ -1,0 +1,107 @@
+{
+  "gateway": {
+    "mode": "local",
+    "port": 18789,
+    "bind": "lan",
+    "trustedProxies": [
+      "127.0.0.1",
+      "172.16.0.0/12",
+      "192.168.0.0/16",
+      "192.168.65.0/24"
+    ],
+    "auth": {
+      "mode": "token",
+      "token": "${OPENCLAW_GATEWAY_TOKEN}"
+    },
+    "controlUi": {
+      "enabled": true,
+      "allowedOrigins": ["http://localhost:18789", "http://127.0.0.1:18789"]
+    }
+  },
+
+  "agents": {
+    "defaults": {
+      "workspace": "/home/node/.openclaw/workspace",
+      "model": {
+        "primary": "ollama/kimi-k2.5:cloud",
+        "fallbacks": [
+          "ollama/minimax-m2.5:cloud",
+          "ollama/gpt-oss:cloud"
+        ]
+      },
+      "sandbox": {
+        "mode": "non-main",
+        "scope": "agent"
+      }
+    },
+    "list": [
+      {
+        "id": "kimi",
+        "name": "Kimi K2.5 Cloud",
+        "model": {
+          "primary": "ollama/kimi-k2.5:cloud",
+          "fallbacks": ["ollama/minimax-m2.5:cloud"]
+        }
+      },
+      {
+        "id": "minimax",
+        "name": "MiniMax M2.5 Cloud",
+        "model": {
+          "primary": "ollama/minimax-m2.5:cloud",
+          "fallbacks": ["ollama/kimi-k2.5:cloud"]
+        }
+      },
+      {
+        "id": "gpt-oss",
+        "name": "GPT-OSS Cloud",
+        "model": {
+          "primary": "ollama/gpt-oss:cloud",
+          "fallbacks": ["ollama/kimi-k2.5:cloud"]
+        }
+      }
+    ]
+  },
+
+  "models": {
+    "providers": {
+      "ollama": {
+        "baseUrl": "http://host.docker.internal:11434",
+        "api": "ollama",
+        "models": [
+          {
+            "id": "kimi-k2.5:cloud",
+            "name": "Kimi K2.5 (Cloud)",
+            "reasoning": true,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "contextWindow": 32768,
+            "maxTokens": 4096
+          },
+          {
+            "id": "minimax-m2.5:cloud",
+            "name": "MiniMax M2.5 (Cloud)",
+            "reasoning": true,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "contextWindow": 16384,
+            "maxTokens": 4096
+          },
+          {
+            "id": "gpt-oss:cloud",
+            "name": "GPT-OSS (Cloud)",
+            "reasoning": true,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "contextWindow": 16384,
+            "maxTokens": 4096
+          }
+        ]
+      }
+    }
+  },
+
+  "tools": {
+    "allow": ["*"],
+    "deny": []
+  }
+}
